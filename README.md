@@ -27,8 +27,16 @@
 
 ### Train model and Save models
 
-* Run `train.py`. The trained models will be saved in ``./ckpt`` 
+* Run `train.py`. The trained models will be saved in `./ckpt`
 
     ```bash
     python train.py
+    ```
+
+### Compare ONNX
+
+* Run `compare.py` to compare the ONNX model and general model weight.
+
+    ```bash
+    python compare.py
     ```
