@@ -3,3 +3,5 @@ torchvision==0.8.2+cu110
 
 numpy
 tqdm
+
+onnx
