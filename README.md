@@ -40,3 +40,11 @@
     ```bash
     python compare.py
     ```
+
+### PyTorch to Keras
+
+* Run `onnx_to_keras.py` to run torch model as keras.
+
+    ```bash
+    python onnx_to_keras.py
+    ```
