@@ -18,8 +18,7 @@ num_classes = 10
 
 def load_dataset(root_path='./data'):
     transform = transforms.Compose(
-    [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+                            [transforms.ToTensor()])
 
     batch_size = 256
 
@@ -35,7 +34,7 @@ def load_dataset(root_path='./data'):
 
     return train_loader, test_loader
 
-def train(dataloader, model, criterion, optimizer, num_epochs=20):
+def train(dataloader, model, criterion, optimizer, num_epochs=50):
     for epoch in range(num_epochs):
         optimizer.step()
         model.train()
@@ -67,6 +66,30 @@ def train(dataloader, model, criterion, optimizer, num_epochs=20):
 
         print(f'epoch {epoch}/{num_epochs} : {epoch_loss:.5f}, {epoch_acc:.5f}')
 
+def sum_t(tensor):
+    return tensor.float().sum().item()
+
+def evaluate(dataloader, model):
+    model.eval()
+    criterion = nn.CrossEntropyLoss()
+
+    total_loss = 0.0
+    correct, total = 0.0, 0.0
+
+    for inputs, targets in dataloader:
+        batch_size = inputs.size(0)
+        inputs, targets = inputs.to(device), targets.to(device)
+
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+
+        total_loss += loss.item() * batch_size
+        predicted = outputs[:, :10].max(1)[1]
+        total += batch_size
+        correct_mask = (predicted == targets)
+        correct += sum_t(correct_mask)
+
+    print("Accuracy: %.2f%%" % (100. * correct / total))
 
 if __name__ == '__main__':
     model = torchvision.models.resnet18(pretrained=pretrained)
@@ -74,11 +97,12 @@ if __name__ == '__main__':
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
     train_loader, test_loader = load_dataset()
 
     train(train_loader, model, criterion, optimizer, num_epochs=10)
+    evaluate(test_loader, model)
 
     CKPT_PATH = './ckpt/resnet18.pth'
     torch.save(model.state_dict(), CKPT_PATH)
