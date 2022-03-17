@@ -5,3 +5,5 @@ numpy
 tqdm
 
 onnx
+onnx2keras
+onnxruntime
